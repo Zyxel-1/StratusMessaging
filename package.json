@@ -1,5 +1,5 @@
 {
-  "name": "greymessaging",
+  "name": "nodechat",
   "version": "1.0.0",
   "description": "A node based chat application.",
   "main": "index.js",
