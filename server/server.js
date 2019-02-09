@@ -16,6 +16,21 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('New User connected.');
 
+    // Socket.emit from Admin with text with a welcome
+    socket.emit('newMessage',{
+        from: 'Admin',
+        text: 'Hey welcome to the chatroom!',
+        createdAt: new Date().getTime()
+    });
+
+    // Socket.broadcast from Admin text New User Joined
+    socket.broadcast.emit('newMessage', {
+        from: 'Admin',
+        text: 'New user joined!',
+        createdAt: new Date().getTime()
+    });
+
+    // Receives messages from client
     socket.on('createMessage', (message)=>{
         // io.emits to all connections
         // socket.io emits to a single connection
@@ -24,6 +39,14 @@ io.on('connection',(socket)=>{
             text: message.text,
             createdAt: new Date().getTime()
         })
+       // Broadcasts to other connections but not your own.
+       /*
+        socket.broadcast.emit('newMessage',{
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        });
+         */
     });
 
     socket.on('disconnect',()=>{
