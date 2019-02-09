@@ -9,26 +9,21 @@ const port = process.env.PORT || 3000;
 var app = express();
 var server = http.createServer(app);
 // making available server to socketIO
-var io = socketIO(server)
+var io = socketIO(server);
 
 app.use(express.static(publicPath));
 
 io.on('connection',(socket)=>{
     console.log('New User connected.');
-    socket.emit('newMessage',{
-        from: 'Jason',
-        text: 'lol',
-        createdAt: new Date().getTime()
-    });
-    
-    socket.on('createMessage', (message)=>{
-        console.log('createMessage: ',message);
 
-        io.emit('newMessage',{
+    socket.on('createMessage', (message)=>{
+        // io.emits to all connections
+        // socket.io emits to a single connection
+        io.emit('newMessage', {
             from: message.from,
             text: message.text,
             createdAt: new Date().getTime()
-        });
+        })
     });
 
     socket.on('disconnect',()=>{
