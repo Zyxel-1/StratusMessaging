@@ -3,6 +3,7 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../client');
 const port = process.env.PORT || 3000;
 
@@ -17,28 +18,16 @@ io.on('connection',(socket)=>{
     console.log('New User connected.');
 
     // Socket.emit from Admin with text with a welcome
-    socket.emit('newMessage',{
-        from: 'Admin',
-        text: 'Hey welcome to the chatroom!',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage',generateMessage('Admin','Welcome to the Chatroom!'));
 
     // Socket.broadcast from Admin text New User Joined
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'New user joined!',
-        createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined!'));
 
     // Receives messages from client
     socket.on('createMessage', (message)=>{
         // io.emits to all connections
         // socket.io emits to a single connection
-        io.emit('newMessage', {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        io.emit('newMessage',generateMessage(message.from,message.text));
        // Broadcasts to other connections but not your own.
        /*
         socket.broadcast.emit('newMessage',{
