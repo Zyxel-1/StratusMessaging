@@ -29,10 +29,11 @@ io.on('connection', (socket) => {
 
     // Receives messages from client
     socket.on('createMessage', (message, callback) => {
-        // io.emits to all connections
-        // socket.io emits to a single connection
-        io.emit('newMessage', generateMessage(message.from, message.text));
-        // Calls the callback in the client for acknowledgement
+        // Find the room the user is sending message.
+        var user = users.getUser(socket.id);
+        if(user && isRealString(message.text)){
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        }
         callback();
     });
 
@@ -40,9 +41,10 @@ io.on('connection', (socket) => {
         if (!isRealString(params.name) || !isRealString(params.room)) {
             callback("Error: Valid Name and Room are required.")
         }
-        socket.join(params.room);
+        
         // Leave other room and enter a new room
         users.removeUser(socket.id);
+        socket.join(params.room);
         users.addUser(socket.id,params.name,params.room);
         // Returns list of users in room
         io.to(params.room).emit('updateUserList',users.getUserList(params.room));
@@ -54,7 +56,11 @@ io.on('connection', (socket) => {
     })
     // Sends location message to users
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+        if(user){
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
+        
     });
 
     socket.on('disconnect', () => {
