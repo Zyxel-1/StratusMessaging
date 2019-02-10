@@ -11,11 +11,22 @@ socket.on('disconnect', function () {
 // Displays new messages in chat
 socket.on('newMessage', function(message){
     var formattedTime = moment(message.createdAt).format('h:mm a')
+    var template = jQuery('#message-template').html();
+    var html = Mustache.render(template,{
+        text: message.text,
+        from: message.from,
+        createdAt: formattedTime
+    });
+
+    jQuery('#messages').append(html);
+    
+    /**
     
     // Displaying messages to the screen
     var li = jQuery('<li></li>');
     li.text(`${message.from} - ${formattedTime}: ${message.text}`);
     jQuery('#messages').append(li);
+     */
 });
 
 // Display locations in chat
