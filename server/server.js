@@ -31,7 +31,7 @@ io.on('connection',(socket)=>{
         // socket.io emits to a single connection
         io.emit('newMessage',generateMessage(message.from,message.text));
         // Calls the callback in the client for acknowledgement
-        callback('This is from the server.');
+        callback();
     });
 
     // Sends location message to users
