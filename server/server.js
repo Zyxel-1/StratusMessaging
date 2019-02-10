@@ -3,7 +3,8 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage,generateLocationMessage} = require('./utils/message');
+
 const publicPath = path.join(__dirname, '../client');
 const port = process.env.PORT || 3000;
 
@@ -31,15 +32,13 @@ io.on('connection',(socket)=>{
         io.emit('newMessage',generateMessage(message.from,message.text));
         // Calls the callback in the client for acknowledgement
         callback('This is from the server.');
-       // Broadcasts to other connections but not your own.
-       /*
-        socket.broadcast.emit('newMessage',{
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        });
-         */
     });
+
+    // Sends location message to users
+    socket.on('createLocationMessage',(coords)=>{
+        io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude, coords.longitude));
+    });
+
 
     socket.on('disconnect',()=>{
         console.log('Disconnected from client.')

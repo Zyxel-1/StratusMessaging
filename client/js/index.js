@@ -9,6 +9,7 @@ socket.on('disconnect', function () {
     console.log('Disconnected from server.');
 });
 
+// Displays new messages in chat
 socket.on('newMessage', function(message){
     console.log('newMessage',message);
     
@@ -18,6 +19,19 @@ socket.on('newMessage', function(message){
     jQuery('#messages').append(li);
 });
 
+// Display locations in chat
+socket.on('newLocationMessage', function (message) {
+    var li = jQuery('<li></li>');
+    var a = jQuery('<a target="_blank">My Current Location</a>');
+
+    li.text(`${message.from}: `);
+    a.attr('href',message.url);
+    li.append(a);
+    jQuery('#messages').append(li);
+
+})
+
+// Sends message to Server
 jQuery('#message-form').on('submit', function (e){
     e.preventDefault();
     
@@ -29,3 +43,22 @@ jQuery('#message-form').on('submit', function (e){
 
     });
 });
+
+// Getting user's location
+var locationButton = jQuery('#send-location');
+
+locationButton.on('click',function (){
+    if(!navigator.geolocation){
+        return alert('Geolocation not supported by your browser.');
+    }
+
+    navigator.geolocation.getCurrentPosition(function (position){
+        socket.emit('createLocationMessage',{
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        })
+    }, function (){
+        alert('Unable to fetch location.')
+    });
+
+})
