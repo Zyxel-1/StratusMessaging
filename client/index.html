@@ -4,13 +4,20 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>HomePage</title>
+    <title>NodeChat - Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
-    <p>Hello World</p>
+    <p>NodeChat</p>
+    <ol id="messages">
+    </ol>
+    <form id="message-form">
+        <input name="message" type="text" placeholder="Message"/>
+        <button>Send</button>
+    </form>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="libs/jquery-3.3.1.min.js"></script>
     <script src="/js/index.js"></script>
 
 </body>

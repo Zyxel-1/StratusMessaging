@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 
 var app = express();
 var server = http.createServer(app);
+
 // making available server to socketIO
 var io = socketIO(server);
 
@@ -24,10 +25,12 @@ io.on('connection',(socket)=>{
     socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined!'));
 
     // Receives messages from client
-    socket.on('createMessage', (message)=>{
+    socket.on('createMessage', (message, callback)=>{
         // io.emits to all connections
         // socket.io emits to a single connection
         io.emit('newMessage',generateMessage(message.from,message.text));
+        // Calls the callback in the client for acknowledgement
+        callback('This is from the server.');
        // Broadcasts to other connections but not your own.
        /*
         socket.broadcast.emit('newMessage',{
